@@ -1,3 +1,4 @@
+const Employee = require("./lib/Employee.js");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
@@ -10,11 +11,10 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./src/page-template.js");
 
-
+const employees = [];
 // TODO: Write Code to gather information about the development team members, and render the HTML file.
-async function inquirerteamManager(){
-
-inquirer.prompt([
+const inquirerManager = async() => {
+    const {menuchoice } = await inquirer.prompt([
     {
         type: 'input',
         name:'name',
@@ -36,18 +36,84 @@ inquirer.prompt([
         message:'What is your office number'
     }, 
     {
-        type:'choice'
+        type: 'list',
+        name: 'menuchoice',
+        message: 'What would you want to do now?',
+        choices: ['add an Engineer', 'add an Intern', 'Finish the project']
     }
+]);
 
+// Switch statement to handle user's choice
+switch (menuchoice) {
+    case 'add an Engineer':
+        const engineerInfo = await inquirerEngineer();
+        break;
+    case 'add an Intern':
+        const internInfo = await inquirerIntern();
+        break;
+    case 'Finish the project' :
+        generateHTML(employees);
+        break;
+        default:
+            console.log('Error');
+            break;
+}
+};
+
+const inquirerEngineer = async () => {
+await inquirer.prompt([
+    
+      {  
+    type: 'input',
+    name:'name',
+    message: 'Please enter the name of the engineer' 
+} , 
+{
+    type: 'input',
+    name:'id',
+    message: 'What is your ID number'
+}, 
+{
+    type:'input',
+    name:'email',
+    message:'enter your email address'
+}, 
+{
+    type:'input',
+    name:'github username',
+    message:'please enter your github username'
+}
 ])
 }
 
-async function inquirerEngineer(){
-inquirer.prompt([
+const inquirerIntern = async () => {
+    await inquirer.prompt([
+          {  
+        type: 'input',
+        name:'name',
+        message: 'Please enter the name of the intern' 
+    } , 
     {
-
+        type: 'input',
+        name:'id',
+        message: 'What is your ID number'
+    }, 
+    {
+        type:'input',
+        name:'email',
+        message:'enter your email address'
+    }, 
+    {
+        type:'input',
+        name:'school',
+        message:'please enter the name of your school'
     }
-])
-}
-
-
+    ])
+    }
+    const generateHTML = (employees) => {
+    const html = render(employees)
+        fs.writeFileSync(outputPath,html);
+        console.log("HTML file written to");
+        process.exit(0);
+    }
+inquirerManager();
