@@ -5,16 +5,14 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
-
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
-
 const render = require("./src/page-template.js");
 
 const employees = [];
 // TODO: Write Code to gather information about the development team members, and render the HTML file.
 const inquirerManager = async() => {
-    const {menuchoice } = await inquirer.prompt([
+    const {name, id,email, officeNumber, menuchoice } = await inquirer.prompt([
     {
         type: 'input',
         name:'name',
@@ -47,9 +45,11 @@ const inquirerManager = async() => {
 switch (menuchoice) {
     case 'add an Engineer':
         const engineerInfo = await inquirerEngineer();
+        employees.push(engineerInfo);
         break;
     case 'add an Intern':
         const internInfo = await inquirerIntern();
+        employees.push(internInfo);
         break;
     case 'Finish the project' :
         generateHTML(employees);
@@ -61,8 +61,7 @@ switch (menuchoice) {
 };
 
 const inquirerEngineer = async () => {
-await inquirer.prompt([
-    
+const {name, id, email, github} = await inquirer.prompt([
       {  
     type: 'input',
     name:'name',
@@ -83,11 +82,14 @@ await inquirer.prompt([
     name:'github username',
     message:'please enter your github username'
 }
-])
-}
+]);
+
+const engineer = new Engineer(name,id,email,github);
+return engineer;
+};
 
 const inquirerIntern = async () => {
-    await inquirer.prompt([
+   const{ name,id,email,school} = await inquirer.prompt([
           {  
         type: 'input',
         name:'name',
@@ -108,8 +110,10 @@ const inquirerIntern = async () => {
         name:'school',
         message:'please enter the name of your school'
     }
-    ])
-    }
+    ]);
+    const intern = new Intern(name,id,email,school);
+    return intern;
+    };
     const generateHTML = (employees) => {
     const html = render(employees)
         fs.writeFileSync(outputPath,html);
