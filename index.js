@@ -46,10 +46,12 @@ switch (menuchoice) {
     case 'add an Engineer':
         const engineerInfo = await inquirerEngineer();
         employees.push(engineerInfo);
+        mainMenu();
         break;
     case 'add an Intern':
         const internInfo = await inquirerIntern();
         employees.push(internInfo);
+        mainMenu();
         break;
     case 'Finish the project' :
         generateHTML(employees);
@@ -59,6 +61,38 @@ switch (menuchoice) {
             break;
 }
 };
+function mainMenu () {
+inquirer.prompt([
+    {
+        type: 'list',
+        name: 'menuchoice',
+        message: 'What would you want to do now?',
+        choices: ['add an Engineer', 'add an Intern', 'Finish the project']
+    }
+]).then(async (data)=>{
+    switch (data.menuchoice) {
+        case 'add an Engineer':
+            const engineerInfo = await inquirerEngineer();
+            employees.push(engineerInfo);
+            mainMenu();
+            break;
+        case 'add an Intern':
+            const internInfo = await inquirerIntern();
+            employees.push(internInfo);
+            mainMenu();
+            break;
+        case 'Finish the project' :
+            generateHTML(employees);
+            break;
+            default:
+                console.log('Error');
+                break;
+    }
+        
+})
+
+}
+
 
 const inquirerEngineer = async () => {
 const {name, id, email, github} = await inquirer.prompt([
